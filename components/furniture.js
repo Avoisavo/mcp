@@ -181,7 +181,7 @@ export function loadFurniture(scene, roomWidth, roomHeight, roomDepth) {
       });
       
       // Position the rug
-      rug.position.set(-1, 0.01, 2.5);
+      rug.position.set(0, 0.1, 2.5);
       
       // Rotate the rug
       rug.rotation.y = 1.6;

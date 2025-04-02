@@ -81,7 +81,7 @@ export default function Home() {
     // Create a white glass for the window
     const windowGlassGeometry = new THREE.PlaneGeometry(windowWidth, windowHeight);
     const windowGlassMaterial = new THREE.MeshPhysicalMaterial({
-      color: 0xFA5F55, // Pure white color
+      color: 0xffffff, // Pure white color
       transparent: true,
       opacity: 0.8, // More opaque
       transmission: 0.2, // Less transmission for white appearance
