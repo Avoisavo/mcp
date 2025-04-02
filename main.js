@@ -22,13 +22,19 @@ const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 
 // Lighting
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+const ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
 scene.add(ambientLight);
 
-const directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
+const directionalLight = new THREE.DirectionalLight(0xffffff, 1.2);
 directionalLight.position.set(5, 10, 5);
 directionalLight.castShadow = true;
 scene.add(directionalLight);
+
+// Add a second directional light from another angle
+const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.8);
+directionalLight2.position.set(-5, 8, -5);
+directionalLight2.castShadow = true;
+scene.add(directionalLight2);
 
 // Room dimensions
 const roomWidth = 6;
@@ -38,7 +44,7 @@ const roomDepth = 6;
 // Floor (specific color)
 const floorGeometry = new THREE.PlaneGeometry(roomWidth, roomDepth);
 const floorMaterial = new THREE.MeshStandardMaterial({ 
-    color: new THREE.Color('#bcbdbc'),  // Fixed to the brown color you wanted
+    color: new THREE.Color('#d8d9d8'),  // Changed to a lighter gray color
     side: THREE.DoubleSide 
 });
 const floor = new THREE.Mesh(floorGeometry, floorMaterial);
@@ -59,11 +65,14 @@ leftWall.position.set(-roomWidth/2, roomHeight/2, 0);
 leftWall.receiveShadow = true;
 scene.add(leftWall);
 
-// Back wall (specific color #fff9e3)
+// Back wall (slightly darker color)
 const backWallGeometry = new THREE.PlaneGeometry(roomWidth, roomHeight);
 const backWallMaterial = new THREE.MeshStandardMaterial({ 
-    color: new THREE.Color('#fff9e3'),  // Using string format with THREE.Color
-    side: THREE.DoubleSide 
+    color: new THREE.Color('#f0f0f0'),  // Changed to a slightly darker white/light gray
+    side: THREE.DoubleSide,
+    emissive: new THREE.Color('#222222'), // Darker emissive for contrast
+    roughness: 0.7,
+    metalness: 0.1
 });
 const backWall = new THREE.Mesh(backWallGeometry, backWallMaterial);
 backWall.position.set(0, roomHeight/2, -roomDepth/2);
