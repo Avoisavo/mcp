@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { initSidebar } from './components/sidebar.js';
+import { initSidebar } from '../components/sidebar.js';
 
 export default function Home() {
   const mountRef = useRef(null);
