@@ -33,7 +33,7 @@ function initSidebar() {
     fontLink.href = 'https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Quicksand:wght@400;700&display=swap';
     document.head.appendChild(fontLink);
     
-    // Add CSS for the sidebar
+    // Add CSS directly to ensure it's applied
     const style = document.createElement('style');
     style.textContent = `
         #sidebar {
@@ -45,7 +45,7 @@ function initSidebar() {
             background-color: rgba(255, 255, 255, 0.9);
             color: #5a5a5a;
             padding: 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: none;
             z-index: 1000;
             display: flex;
             flex-direction: column;
@@ -76,18 +76,18 @@ function initSidebar() {
             transition: all 0.3s;
             font-family: 'Quicksand', sans-serif;
             font-size: 14px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            box-shadow: none;
             border: 2px solid white;
         }
         
         #sidebar button:hover {
             transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+            box-shadow: none;
         }
         
         #sidebar button:active {
             transform: translateY(0) scale(0.98);
-            box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+            box-shadow: none;
         }
     `;
     document.head.appendChild(style);
