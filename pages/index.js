@@ -1,19 +1,36 @@
 import React, { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { initSidebar } from "../components/sidebar.js";
 import { loadFurniture } from "../components/furniture.js";
 
 export default function Home() {
   const mountRef = useRef(null);
 
+  // Component level variables for animation and scene
+  let walkingSpeed = 0.05;
+  let isWalking = false;
+  let wolf;
+  let mixer;
+  let walkAction;
+  let targetPosition = new THREE.Vector3();
+  let raycaster = new THREE.Raycaster();
+  let mouse = new THREE.Vector2();
+  let animationFrameId = null;
+  let scene, camera, renderer;
+  let lastTimeClicked = 0;
+
   useEffect(() => {
+    // Exit early if the ref isn't set
+    if (!mountRef.current) return;
+
     // Scene setup
-    const scene = new THREE.Scene();
+    scene = new THREE.Scene();
     scene.background = new THREE.Color("#eeeee4"); // Light blue background (sky blue)
 
     // Camera setup
-    const camera = new THREE.PerspectiveCamera(
+    camera = new THREE.PerspectiveCamera(
       75,
       window.innerWidth / window.innerHeight,
       0.1,
@@ -23,7 +40,7 @@ export default function Home() {
     camera.lookAt(0, 0, 0);
 
     // Renderer setup with optimizations
-    const renderer = new THREE.WebGLRenderer({
+    renderer = new THREE.WebGLRenderer({
       antialias: true,
       powerPreference: "high-performance",
     });
@@ -35,6 +52,13 @@ export default function Home() {
     // Controls
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
+
+    // Disable right-click panning
+    controls.enablePan = false;
+
+    // Force the controls to orbit around the center of the room
+    controls.target.set(0, 1, 0); // Set target to center of room, at reasonable height
+    controls.update();
 
     // Lighting
     const ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
@@ -66,6 +90,7 @@ export default function Home() {
     floor.rotation.x = -Math.PI / 2;
     floor.position.y = 0;
     floor.receiveShadow = false;
+    floor.name = "floor"; // Name the floor for raycasting
     scene.add(floor);
 
     // Left wall (light blue color)
@@ -126,11 +151,191 @@ export default function Home() {
     backWall.receiveShadow = false;
     scene.add(backWall);
 
+    // Control variables
+    targetPosition = new THREE.Vector3(0, 0, 0); // Initialize target position
+
     // Load all furniture
     loadFurniture(scene, roomWidth, roomHeight, roomDepth);
 
-    // Initialize the sidebar
-    initSidebar();
+    // Wolf loading and movement functions
+    function loadWolf() {
+      console.log("Loading metamask model (GLTF)...");
+      const loader = new GLTFLoader();
+
+      loader.load(
+        "/wolf/metamask.glb",
+        (gltf) => {
+          console.log("Metamask model loaded:", gltf);
+          wolf = gltf.scene;
+
+          // Scale the model to a reasonable size for the room
+          wolf.scale.set(0.5, 0.5, 0.5); // Adjust scale as needed for this model
+
+          // Position the model in the center of the room
+          wolf.position.set(0, 0, 0);
+
+          // Disable shadows for the model
+          wolf.traverse((node) => {
+            if (node.isMesh) {
+              node.castShadow = false;
+              node.receiveShadow = false;
+              console.log("Mesh properties:", node.name);
+            }
+          });
+
+          // Set up animation mixer if the model has animations
+          mixer = new THREE.AnimationMixer(wolf);
+
+          if (gltf.animations && gltf.animations.length > 0) {
+            console.log("Model has animations:", gltf.animations.length);
+            console.log(
+              "Animation names:",
+              gltf.animations.map((a) => a.name)
+            );
+
+            // Use the first animation (likely to be idle)
+            const animation = gltf.animations[0];
+            walkAction = mixer.clipAction(animation);
+            walkAction.play();
+
+            // Don't pause initially to show some animation while standing
+            console.log("Animation set up");
+          } else {
+            console.log("No animations found in model");
+          }
+
+          // Add to scene
+          scene.add(wolf);
+          console.log("Metamask added to scene at position:", wolf.position);
+
+          // Make sure model is visible
+          wolf.visible = true;
+
+          // Force render to update the scene
+          renderer.render(scene, camera);
+        },
+        (xhr) => {
+          console.log(
+            "Loading progress:",
+            (xhr.loaded / xhr.total) * 100 + "% loaded"
+          );
+        },
+        (error) => {
+          console.error("Error loading model:", error);
+        }
+      );
+    }
+
+    function updateWolfPosition(delta) {
+      if (wolf && isWalking) {
+        // Calculate direction and distance to target
+        const direction = new THREE.Vector3()
+          .subVectors(targetPosition, wolf.position)
+          .normalize();
+        const distance = wolf.position.distanceTo(targetPosition);
+
+        // If we're close enough to the target, stop walking
+        if (distance < 0.1) {
+          isWalking = false;
+          return;
+        }
+
+        // Move the wolf towards the target
+        wolf.position.x += direction.x * walkingSpeed;
+        wolf.position.z += direction.z * walkingSpeed;
+
+        // Rotate the wolf to face the direction of movement
+        const targetRotation = Math.atan2(direction.x, direction.z);
+        wolf.rotation.y = targetRotation;
+
+        // Update animation mixer
+        if (mixer) {
+          mixer.update(delta);
+        }
+      }
+    }
+
+    // Function to spawn wolf when button is clicked
+    function spawnWolf() {
+      console.log("Spawn Wolf button clicked");
+      if (!wolf) {
+        console.log("Metamask not loaded yet, loading now...");
+        loadWolf();
+      } else {
+        console.log(
+          "Metamask already loaded, making visible and resetting position"
+        );
+        // If wolf exists but is not visible, make it visible
+        wolf.visible = true;
+
+        // Reset position to center if needed
+        wolf.position.set(0, 0, 0);
+
+        // Stop any ongoing walking
+        isWalking = false;
+
+        // Force a render to show the wolf
+        renderer.render(scene, camera);
+
+        console.log("Metamask is at position:", wolf.position);
+      }
+    }
+
+    // Initialize the sidebar with callbacks
+    initSidebar({
+      spawnWolf: spawnWolf,
+    });
+
+    // Add right-click event listener for movement
+    function onRightClick(event) {
+      event.preventDefault(); // Prevent the default context menu
+
+      // Only proceed if the wolf exists
+      if (!wolf) {
+        console.log(
+          "Metamask doesn't exist yet. Please summon the wolf first."
+        );
+        return;
+      }
+
+      // Calculate mouse position in normalized device coordinates (-1 to +1)
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+      // Update the raycaster with the camera and mouse position
+      raycaster.setFromCamera(mouse, camera);
+
+      // Find intersections with the floor
+      const floorObjects = scene.children.filter((obj) => obj.name === "floor");
+      console.log("Floor objects found:", floorObjects.length);
+
+      const intersects = raycaster.intersectObjects(floorObjects);
+
+      if (intersects.length > 0) {
+        console.log("Right click detected on floor", intersects[0].point);
+
+        // Set the target position where the wolf should move to
+        targetPosition.copy(intersects[0].point);
+
+        // Calculate direction and update wolf rotation
+        const direction = new THREE.Vector3()
+          .subVectors(targetPosition, wolf.position)
+          .normalize();
+
+        // Set the wolf's rotation to face the direction of movement
+        const targetRotation = Math.atan2(direction.x, direction.z);
+        wolf.rotation.y = targetRotation;
+
+        // Start walking
+        isWalking = true;
+        console.log("Started walking to: ", targetPosition);
+      } else {
+        console.log("No intersection with floor detected");
+      }
+    }
+
+    // Register the right-click event handler
+    renderer.domElement.addEventListener("contextmenu", onRightClick);
 
     // Handle window resize
     const handleResize = () => {
@@ -147,13 +352,17 @@ export default function Home() {
     const frameInterval = 1000 / targetFPS;
 
     function animate(currentTime) {
-      requestAnimationFrame(animate);
+      animationFrameId = requestAnimationFrame(animate);
 
       // Throttle renders to target FPS
       const deltaTime = currentTime - lastFrameTime;
       if (deltaTime < frameInterval) return;
 
+      const delta = deltaTime / 1000; // Convert to seconds
       lastFrameTime = currentTime - (deltaTime % frameInterval);
+
+      // Update wolf position if it's moving
+      updateWolfPosition(delta);
 
       controls.update();
       renderer.render(scene, camera);
@@ -164,7 +373,13 @@ export default function Home() {
     // Cleanup function
     return () => {
       window.removeEventListener("resize", handleResize);
-      mountRef.current.removeChild(renderer.domElement);
+      renderer.domElement.removeEventListener("contextmenu", onRightClick);
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
+      if (mountRef.current && renderer.domElement) {
+        mountRef.current.removeChild(renderer.domElement);
+      }
       renderer.dispose();
     };
   }, []);
