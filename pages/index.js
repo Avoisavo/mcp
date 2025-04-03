@@ -79,9 +79,9 @@ export default function Home() {
     scene.add(directionalLight2);
 
     // Room dimensions
-    const roomWidth = 6;
+    const roomWidth = 10;
     const roomHeight = 3.5;
-    const roomDepth = 8;
+    const roomDepth = 10;
 
     // Floor (specific color)
     const floorGeometry = new THREE.PlaneGeometry(roomWidth, roomDepth);
@@ -110,8 +110,8 @@ export default function Home() {
 
     // Create a window cutout in the left wall
     const windowWidth = 1.2;
-    const windowHeight = 1.3;
-    const windowX = -roomWidth / 2 + 0.01; // Slightly in front of the wall
+    const windowHeight = 1.;
+    const windowX = -roomWidth/2 + 0.01; // Slightly in front of the wall
     const windowY = 2.1; // Height position
     const windowZ = -2; // Same Z position as the bed and window frame
 
@@ -121,7 +121,7 @@ export default function Home() {
       windowHeight
     );
     const windowGlassMaterial = new THREE.MeshPhysicalMaterial({
-      color: 0xfa5f55, // Pure white color
+      color: 0xffffff, // Pure white color
       transparent: true,
       opacity: 0.8, // More opaque
       transmission: 0.2, // Less transmission for white appearance
