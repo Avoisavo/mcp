@@ -1,7 +1,7 @@
 import { initMetaWallet } from './metawallet.js';
 
 // Create and initialize the sidebar
-function initSidebar() {
+function initSidebar(callbacks = {}) {
     // Create sidebar container
     const sidebar = document.createElement('div');
     sidebar.id = 'sidebar';
@@ -11,65 +11,51 @@ function initSidebar() {
     title.textContent = 'Controls';
     sidebar.appendChild(title);
     
-    // Create Metamask button with icon
-    const metamaskButton = document.createElement('button');
-    metamaskButton.id = 'metamask-button';
+    // Create spawn metamask button with icon
+    const spawnButton = document.createElement('button');
+    spawnButton.id = 'metamask-button';
     
     // Create and add the Metamask icon
     const metamaskIcon = document.createElement('img');
-    metamaskIcon.src = '/icon/metamask.png'; // Path to the metamask icon
+    metamaskIcon.src = '/icon/metamask.png'; // Path to the original metamask icon
     metamaskIcon.alt = 'Metamask';
     metamaskIcon.style.width = '24px';
     metamaskIcon.style.height = '24px';
     metamaskIcon.style.marginRight = '8px';
     
     // Add icon and text to button
-    metamaskButton.appendChild(metamaskIcon);
-    metamaskButton.appendChild(document.createTextNode('Metamask'));
+    spawnButton.appendChild(metamaskIcon);
+    spawnButton.appendChild(document.createTextNode('Summon Wolf'));
     
     // Style the button
-    metamaskButton.style.backgroundColor = '#ffb6c1';
-    metamaskButton.style.display = 'flex';
-    metamaskButton.style.alignItems = 'center';
-    metamaskButton.style.justifyContent = 'center';
+    spawnButton.style.backgroundColor = '#FF9966'; // Orange color
+    spawnButton.style.display = 'flex';
+    spawnButton.style.alignItems = 'center';
+    spawnButton.style.justifyContent = 'center';
     
-    // Add event listener to initialize the draggable MetaMask wallet
-    metamaskButton.addEventListener('click', () => {
-        console.log('Metamask button clicked');
-        initMetaWallet();
+    spawnButton.addEventListener('click', () => {
+        console.log('Summon Wolf button clicked');
+        // Call the spawnWolf callback if it exists
+        if (callbacks.spawnWolf) {
+            callbacks.spawnWolf();
+        }
     });
+    sidebar.appendChild(spawnButton);
     
-    sidebar.appendChild(metamaskButton);
+    // Create buttons
+    const buttonLabels = ['Light', 'Color', 'Camera', 'Reset', 'Help'];
+    const buttonColors = ['#ff7eb9', '#7afcff', '#feff9c', '#fff7ad', '#b0c2f2'];
     
-    // Create 1inch button with icon
-    const oneInchButton = document.createElement('button');
-    oneInchButton.id = 'oneinch-button';
-    
-    // Create and add the 1inch icon
-    const oneInchIcon = document.createElement('img');
-    oneInchIcon.src = '/icon/1inch.png'; // Path to the 1inch icon
-    oneInchIcon.alt = '1inch';
-    oneInchIcon.style.width = '24px';
-    oneInchIcon.style.height = '24px';
-    oneInchIcon.style.marginRight = '8px';
-    
-    // Add icon and text to button
-    oneInchButton.appendChild(oneInchIcon);
-    oneInchButton.appendChild(document.createTextNode('1inch'));
-    
-    // Style the button
-    oneInchButton.style.backgroundColor = '#e8f4f8'; // Light blue background
-    oneInchButton.style.display = 'flex';
-    oneInchButton.style.alignItems = 'center';
-    oneInchButton.style.justifyContent = 'center';
-    
-    // Add event listener
-    oneInchButton.addEventListener('click', () => {
-        console.log('1inch button clicked');
-        // Add 1inch functionality here
+    buttonLabels.forEach((label, index) => {
+        const button = document.createElement('button');
+        button.textContent = label;
+        button.style.backgroundColor = buttonColors[index];
+        button.addEventListener('click', () => {
+            console.log(`${label} button clicked`);
+            // Add functionality for each button here
+        });
+        sidebar.appendChild(button);
     });
-    
-    sidebar.appendChild(oneInchButton);
     
     // Append sidebar to the document body
     document.body.appendChild(sidebar);
@@ -85,63 +71,54 @@ function initSidebar() {
     style.textContent = `
         #sidebar {
             position: fixed;
-            right: 20px;
             top: 20px;
+            right: 20px;
             width: 180px;
-            height: auto;
-            background-color: rgba(255, 255, 255, 0.9);
-            color: #5a5a5a;
-            padding: 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            border-radius: 20px;
-            font-family: 'Quicksand', sans-serif;
-            backdrop-filter: blur(5px);
-            border: 2px solid #f0f0f0;
+            font-family: 'Nunito', sans-serif;
         }
         
         #sidebar h2 {
             margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            color: #333;
             text-align: center;
-            border-bottom: 2px dotted #ffb6c1;
-            padding-bottom: 10px;
-            font-family: 'Nunito', sans-serif;
+            font-family: 'Quicksand', sans-serif;
             font-weight: 700;
-            color: #ff6b9d;
         }
         
         #sidebar button {
-            padding: 12px;
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
             border: none;
-            border-radius: 15px;
-            color: #5a5a5a;
-            font-weight: bold;
+            border-radius: 5px;
             cursor: pointer;
-            transition: all 0.3s;
-            font-family: 'Quicksand', sans-serif;
-            font-size: 14px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            border: 2px solid white;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+            color: #333;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
         
         #sidebar button:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         
         #sidebar button:active {
-            transform: translateY(0) scale(0.98);
-            box-shadow: none;
-        }
-        
-        #metamask-button img {
-            vertical-align: middle;
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
     `;
-  document.head.appendChild(style);
+    document.head.appendChild(style);
+
+    return sidebar;
 }
 
 // Export the initialization function
