@@ -6,6 +6,7 @@ import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader.js";
 import { initSidebar } from "../components/sidebar.js";
 import { loadFurniture } from "../components/furniture.js";
 import { loadAIAgent } from "../components/aiagent.js";
+import { spawn1inchUnicorn } from "../components/oneinch.js";
 
 // At the top of your file, before the component
 // Add this if you remove globals.css
@@ -320,7 +321,8 @@ export default function Home() {
       },
       'oneinch-button': () => {
         console.log("1inch button clicked");
-        // Add 1inch functionality here
+        // Add 1inch functionality to spawn the unicorn
+        spawn1inchUnicorn(scene);
       }
     }, scene); // Pass the scene object here
 
