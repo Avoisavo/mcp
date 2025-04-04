@@ -75,7 +75,13 @@ export default function Shortcut({ onClose, onDrop }) {
         // Don't close if we're clicking on the draggable icon
         if (event.target.id === 'draggable-metamask-icon') return;
         
-        onClose();
+        // Also check if we're clicking on the sidebar or its children
+        const sidebar = document.getElementById('sidebar');
+        if (sidebar && (sidebar === event.target || sidebar.contains(event.target))) {
+          onClose();
+        } else if (!event.target.closest('#sidebar')) {
+          onClose();
+        }
       }
     };
 
@@ -100,9 +106,14 @@ export default function Shortcut({ onClose, onDrop }) {
         </div>
         <div className={styles.content}>
           {isDraggingOver ? (
-            <p>Drop to create shortcut</p>
+            <p className={styles.dropMessage}>Drop to create shortcut</p>
           ) : (
-            <p>Drag a button from the sidebar to create a shortcut</p>
+            <>
+              <div className={styles.iconPlaceholder}>
+                <span className={styles.plusIcon}>+</span>
+              </div>
+              <p className={styles.instructions}>Drag a button from the sidebar to create a shortcut</p>
+            </>
           )}
         </div>
       </div>

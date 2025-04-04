@@ -89,7 +89,7 @@ export function initSidebar(callbacks = {}) {
     document.head.appendChild(style);
 
     // Make buttons draggable
-    const buttons = document.querySelectorAll('.sidebar-button');
+    const buttons = document.querySelectorAll('#sidebar button');
     buttons.forEach(button => {
         button.setAttribute('draggable', 'true');
         
@@ -108,10 +108,10 @@ export function initSidebar(callbacks = {}) {
             
             // Remove any existing draggable icon
             const existingIcon = document.getElementById('draggable-metamask-icon');
-            if (existingIcon) {
+            if (existingIcon && existingIcon.parentNode) {
                 existingIcon.parentNode.removeChild(existingIcon);
             }
-            
+
             // Create a draggable icon
             const icon = document.createElement('img');
             icon.src = '/icon/metamask.png';
@@ -123,45 +123,39 @@ export function initSidebar(callbacks = {}) {
             icon.style.height = '50px';
             icon.style.cursor = 'grab';
             icon.style.zIndex = '2000';
-            icon.style.pointerEvents = 'none'; // Allow mouse events to pass through initially
+            icon.style.pointerEvents = 'auto'; // Make it interactive immediately
             
             // Add the icon to the body
             document.body.appendChild(icon);
             console.log("Icon created and added to body", icon);
             
-            // After a short delay, make the icon interactive
-            setTimeout(() => {
-                if (icon.parentNode) {
-                    icon.style.pointerEvents = 'auto';
-                    icon.setAttribute('draggable', 'true');
-                }
-            }, 100);
+            // Make the icon draggable
+            let isDragging = false;
+            let offsetX, offsetY;
             
-            // Move the icon with the mouse until dropped
-            const moveIcon = (moveEvent) => {
-                if (icon.parentNode) {
-                    icon.style.left = `${moveEvent.clientX - 25}px`;
-                    icon.style.top = `${moveEvent.clientY - 25}px`;
-                }
-            };
-            
-            document.addEventListener('mousemove', moveIcon);
-            
-            // Handle drop or click elsewhere
-            const handleDrop = () => {
-                document.removeEventListener('mousemove', moveIcon);
-                document.removeEventListener('mouseup', handleDrop);
+            icon.addEventListener('mousedown', (mouseDownEvent) => {
+                isDragging = true;
+                offsetX = mouseDownEvent.clientX - parseInt(icon.style.left);
+                offsetY = mouseDownEvent.clientY - parseInt(icon.style.top);
+                icon.style.cursor = 'grabbing';
                 
-                // If the icon is not dropped on a valid target after a delay, remove it
-                setTimeout(() => {
-                    const iconElement = document.getElementById('draggable-metamask-icon');
-                    if (iconElement && iconElement.parentNode) {
-                        iconElement.parentNode.removeChild(iconElement);
-                    }
-                }, 100);
-            };
+                // Prevent default to avoid text selection during drag
+                mouseDownEvent.preventDefault();
+            });
             
-            document.addEventListener('mouseup', handleDrop);
+            document.addEventListener('mousemove', (mouseMoveEvent) => {
+                if (!isDragging) return;
+                
+                icon.style.left = `${mouseMoveEvent.clientX - offsetX}px`;
+                icon.style.top = `${mouseMoveEvent.clientY - offsetY}px`;
+            });
+            
+            document.addEventListener('mouseup', () => {
+                if (isDragging) {
+                    isDragging = false;
+                    icon.style.cursor = 'grab';
+                }
+            });
             
             // Call the original callback
             if (callbacks && callbacks['metamask-button']) {

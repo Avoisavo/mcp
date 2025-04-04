@@ -1,112 +1,287 @@
-.container {
+.overlay {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 350px;
-  height: 500px;
-  background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  perspective: 1000px;
+}
+
+.container {
+  width: 450px;
+  height: 600px;
+  background: linear-gradient(145deg, #1a1a2e, #16213e);
+  border-radius: 16px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  z-index: 1000;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+  transform-style: preserve-3d;
+  transform: rotateX(2deg);
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .header {
   display: flex;
   align-items: center;
-  padding: 12px 16px;
-  background-color: #f6851b; /* MetaMask orange */
-  color: white;
+  padding: 16px 20px;
+  background: linear-gradient(90deg, #0f3460, #162447);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  z-index: 2;
+}
+
+.logoContainer {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  margin-right: 12px;
 }
 
 .logo {
-  width: 24px;
-  height: 24px;
-  margin-right: 8px;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  position: relative;
+  z-index: 2;
+}
+
+.logoGlow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle, rgba(255, 163, 0, 0.4) 0%, rgba(255, 163, 0, 0) 70%);
+  filter: blur(5px);
+  z-index: 1;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.2); }
+  100% { opacity: 0.5; transform: scale(1); }
+}
+
+.header h2 {
+  color: white;
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  flex-grow: 1;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .closeButton {
-  margin-left: auto;
   background: none;
   border: none;
-  color: white;
-  font-size: 20px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 24px;
   cursor: pointer;
+  transition: color 0.2s;
+}
+
+.closeButton:hover {
+  color: white;
 }
 
 .chatContainer {
   flex: 1;
-  padding: 16px;
   overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  padding: 20px;
+  position: relative;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.chatContainer::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chatContainer::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.lowPolyBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 800 800'%3E%3Cg fill='none' stroke='%23222255' stroke-width='1'%3E%3Cpath d='M769 229L1037 260.9M927 880L731 737 520 660 309 538 40 599 295 764 126.5 879.5 40 599-197 493 102 382-31 229 126.5 79.5-69-63'/%3E%3Cpath d='M-31 229L237 261 390 382 603 493 308.5 537.5 101.5 381.5M370 905L295 764'/%3E%3Cpath d='M520 660L578 842 731 737 840 599 603 493 520 660 295 764 309 538 390 382 539 269 769 229 577.5 41.5 370 105 295 -36 126.5 79.5 237 261 102 382 40 599 -69 737 127 880'/%3E%3Cpath d='M520-140L578.5 42.5 731-63M603 493L539 269 237 261 370 105M902 382L539 269M390 382L102 382'/%3E%3Cpath d='M-222 42L126.5 79.5 370 105 539 269 577.5 41.5 927 80 769 229 902 382 603 493 731 737M295-36L577.5 41.5M578 842L295 764M40-201L127 80M102 382L-261 269'/%3E%3C/g%3E%3Cg fill='%23222255'%3E%3Ccircle cx='769' cy='229' r='5'/%3E%3Ccircle cx='539' cy='269' r='5'/%3E%3Ccircle cx='603' cy='493' r='5'/%3E%3Ccircle cx='731' cy='737' r='5'/%3E%3Ccircle cx='520' cy='660' r='5'/%3E%3Ccircle cx='309' cy='538' r='5'/%3E%3Ccircle cx='295' cy='764' r='5'/%3E%3Ccircle cx='40' cy='599' r='5'/%3E%3Ccircle cx='102' cy='382' r='5'/%3E%3Ccircle cx='127' cy='80' r='5'/%3E%3Ccircle cx='370' cy='105' r='5'/%3E%3Ccircle cx='578' cy='42' r='5'/%3E%3Ccircle cx='237' cy='261' r='5'/%3E%3Ccircle cx='390' cy='382' r='5'/%3E%3C/g%3E%3C/svg%3E");
+  opacity: 0.1;
+  z-index: 0;
 }
 
 .message {
+  margin-bottom: 16px;
   display: flex;
-  margin-bottom: 8px;
-}
-
-.userMessage {
-  justify-content: flex-end;
+  position: relative;
+  z-index: 1;
 }
 
 .aiMessage {
   justify-content: flex-start;
 }
 
-.messageBubble {
-  max-width: 80%;
-  padding: 10px 14px;
-  border-radius: 18px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+.userMessage {
+  justify-content: flex-end;
 }
 
-.userMessage .messageBubble {
-  background-color: #e1f5fe;
-  border-bottom-right-radius: 4px;
+.messageBubble {
+  max-width: 80%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  position: relative;
+  transform-style: preserve-3d;
+  transform: perspective(500px) rotateX(2deg);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .aiMessage .messageBubble {
-  background-color: #f5f5f5;
-  border-bottom-left-radius: 4px;
+  background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+  color: white;
+  border-bottom-left-radius: 2px;
 }
 
-.messageBubble strong {
+.userMessage .messageBubble {
+  background: linear-gradient(135deg, #4c1d95, #8b5cf6);
+  color: white;
+  border-bottom-right-radius: 2px;
+}
+
+.messageCorner {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  bottom: -6px;
+  transform: rotate(45deg);
+}
+
+.aiMessage .messageCorner {
+  left: -2px;
+  background: linear-gradient(135deg, transparent 50%, #1e3a8a 50%);
+}
+
+.userMessage .messageCorner {
+  right: -2px;
+  background: linear-gradient(135deg, transparent 50%, #4c1d95 50%);
+}
+
+.senderName {
   font-size: 12px;
-  color: #666;
-  display: block;
+  font-weight: 600;
   margin-bottom: 4px;
+  opacity: 0.8;
 }
 
 .messageBubble p {
   margin: 0;
-  white-space: pre-wrap;
+  line-height: 1.4;
 }
 
 .inputContainer {
+  display: none;
+}
+
+.optionsContainer {
   display: flex;
-  padding: 12px;
-  border-top: 1px solid #eee;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+  width: 100%;
+  position: relative;
+  z-index: 2;
 }
 
-.input {
-  flex: 1;
-  padding: 10px 14px;
-  border: 1px solid #ddd;
-  border-radius: 20px;
-  outline: none;
-}
-
-.sendButton {
-  margin-left: 8px;
-  padding: 0 16px;
-  background-color: #f6851b;
+.optionButton {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(59, 130, 246, 0.1));
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 8px;
+  padding: 12px 16px;
   color: white;
-  border: none;
-  border-radius: 20px;
+  font-size: 14px;
   cursor: pointer;
+  text-align: left;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.optionButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.optionButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.5);
+}
+
+.optionButton:hover::before {
+  opacity: 1;
+}
+
+.optionButton:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.2);
+}
+
+.loadingMessages {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  gap: 8px;
+}
+
+.loadingDot {
+  width: 10px;
+  height: 10px;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  animation: loadingBounce 1.4s infinite ease-in-out both;
+}
+
+.loadingDot:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.loadingDot:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+@keyframes loadingBounce {
+  0%, 80%, 100% { 
+    transform: scale(0);
+  } 
+  40% { 
+    transform: scale(1);
+  }
+}
+
+.exitButton {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.1));
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+.exitButton:hover {
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.6);
 } 
