@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
@@ -6,6 +6,9 @@ import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader.js";
 import { initSidebar } from "../components/sidebar.js";
 import { loadFurniture } from "../components/furniture.js";
 import { loadAIAgent } from "../components/aiagent.js";
+import dynamic from 'next/dynamic';
+const Shortcut = dynamic(() => import('../components/shortcut'), { ssr: false });
+const MetamaskShortcut = dynamic(() => import('../components/metamask_shortcut'), { ssr: false });
 
 export default function Home() {
   const mountRef = useRef(null);
@@ -24,6 +27,10 @@ export default function Home() {
   let lastTimeClicked = 0;
   let animations = {}; // Dictionary to store animations
   let currentAnimation = null;
+
+  // Add these state variables
+  const [showShortcutPopup, setShowShortcutPopup] = useState(false);
+  const [showMetamaskShortcut, setShowMetamaskShortcut] = useState(false);
 
   useEffect(() => {
     // Exit early if the ref isn't set
@@ -91,9 +98,9 @@ export default function Home() {
     scene.add(directionalLight2);
 
     // Room dimensions
-    const roomWidth = 6;
+    const roomWidth = 7;
     const roomHeight = 3.5;
-    const roomDepth = 6;
+    const roomDepth = 7;
 
     // Floor (specific color)
     const floorGeometry = new THREE.PlaneGeometry(roomWidth, roomDepth);
@@ -308,18 +315,16 @@ export default function Home() {
     }
 
     // Initialize the sidebar with callbacks
+    console.log("Initializing sidebar with callbacks");
     initSidebar({
       'metamask-button': () => {
-        console.log("Metamask button clicked");
-        // Add Metamask functionality here
+        console.log("Metamask button clicked callback executed");
       },
       'gmail-button': () => {
         console.log("Gmail button clicked");
-        // Add Gmail functionality here
       },
       'oneinch-button': () => {
         console.log("1inch button clicked");
-        // Add 1inch functionality here
       }
     });
 
@@ -408,6 +413,51 @@ export default function Home() {
 
     animate(0);
 
+    // Add click event handler for 3D objects
+    function onClick(event) {
+      // Calculate mouse position in normalized device coordinates
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+      
+      // Update the raycaster
+      raycaster.setFromCamera(mouse, camera);
+      
+      // Find all intersected objects
+      const intersects = raycaster.intersectObjects(scene.children, true);
+      
+      if (intersects.length > 0) {
+        // Find the first clickable object
+        let clickableObject = null;
+        
+        for (let i = 0; i < intersects.length; i++) {
+          const object = intersects[i].object;
+          let parent = object;
+          
+          // Traverse up to find a parent with userData
+          while (parent && !parent.userData?.clickable) {
+            parent = parent.parent;
+          }
+          
+          if (parent && parent.userData?.clickable) {
+            clickableObject = parent;
+            break;
+          }
+        }
+        
+        if (clickableObject) {
+          console.log('Clicked on:', clickableObject.userData.type);
+          
+          // Handle different clickable objects
+          if (clickableObject.userData.type === 'airConditioner') {
+            setShowShortcutPopup(true);
+          }
+        }
+      }
+    }
+    
+    // Register the click event handler
+    renderer.domElement.addEventListener('click', onClick);
+
     // Cleanup function
     return () => {
       window.removeEventListener("resize", handleResize);
@@ -419,8 +469,38 @@ export default function Home() {
         mountRef.current.removeChild(renderer.domElement);
       }
       renderer.dispose();
+      renderer.domElement.removeEventListener('click', onClick);
     };
   }, []);
 
-  return <div ref={mountRef} style={{ width: "100%", height: "100vh" }}></div>;
+  // Handle dropping a button on the shortcut popup
+  const handleShortcutDrop = (buttonId) => {
+    console.log('Button dropped:', buttonId);
+    setShowShortcutPopup(false);
+    
+    // Show the appropriate shortcut based on the button
+    if (buttonId === 'metamask-button') {
+      setShowMetamaskShortcut(true);
+    }
+    // Add handlers for other buttons if needed
+  };
+
+  return (
+    <>
+      <div ref={mountRef} style={{ width: "100%", height: "100vh" }}></div>
+      
+      {showShortcutPopup && (
+        <Shortcut 
+          onClose={() => setShowShortcutPopup(false)} 
+          onDrop={handleShortcutDrop} 
+        />
+      )}
+      
+      {showMetamaskShortcut && (
+        <MetamaskShortcut 
+          onClose={() => setShowMetamaskShortcut(false)} 
+        />
+      )}
+    </>
+  );
 }
