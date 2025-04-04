@@ -1,7 +1,9 @@
 import { initMetaWallet } from './metawallet.js';
+import { spawnMetamaskWolf } from './metawallet';
+import { spawn1inchUnicorn } from './oneinch';
 
 // Create and initialize the sidebar with three buttons
-export function initSidebar(callbacks = {}) {
+export function initSidebar(callbacks = {}, scene) {
     // Create sidebar container
     const sidebar = document.createElement('div');
     sidebar.id = 'sidebar';
@@ -25,6 +27,11 @@ export function initSidebar(callbacks = {}) {
             // Call the appropriate callback if it exists
             if (callbacks[data.id]) {
                 callbacks[data.id]();
+            }
+            
+            // Only spawn the Metamask wolf for the Metamask button
+            if (data.id === 'metamask-button' && scene) {
+                spawnMetamaskWolf(scene);
             }
         });
         sidebar.appendChild(button);
