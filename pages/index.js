@@ -7,6 +7,9 @@ import { initSidebar } from "../components/sidebar.js";
 import { loadFurniture } from "../components/furniture.js";
 import { loadAIAgent } from "../components/aiagent.js";
 import { spawn1inchUnicorn } from "../components/oneinch.js";
+import dynamic from 'next/dynamic';
+const Shortcut = dynamic(() => import('../components/shortcut'), { ssr: false });
+const MetamaskShortcut = dynamic(() => import('../components/metamask_shortcut'), { ssr: false });
 
 // At the top of your file, before the component
 // Add this if you remove globals.css
@@ -434,6 +437,51 @@ export default function Home() {
     // Store the scene reference in state
     setSceneRef(scene);
 
+    // Add click event handler for 3D objects
+    function onClick(event) {
+      // Calculate mouse position in normalized device coordinates
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+      
+      // Update the raycaster
+      raycaster.setFromCamera(mouse, camera);
+      
+      // Find all intersected objects
+      const intersects = raycaster.intersectObjects(scene.children, true);
+      
+      if (intersects.length > 0) {
+        // Find the first clickable object
+        let clickableObject = null;
+        
+        for (let i = 0; i < intersects.length; i++) {
+          const object = intersects[i].object;
+          let parent = object;
+          
+          // Traverse up to find a parent with userData
+          while (parent && !parent.userData?.clickable) {
+            parent = parent.parent;
+          }
+          
+          if (parent && parent.userData?.clickable) {
+            clickableObject = parent;
+            break;
+          }
+        }
+        
+        if (clickableObject) {
+          console.log('Clicked on:', clickableObject.userData.type);
+          
+          // Handle different clickable objects
+          if (clickableObject.userData.type === 'airConditioner') {
+            setShowShortcutPopup(true);
+          }
+        }
+      }
+    }
+    
+    // Register the click event handler
+    renderer.domElement.addEventListener('click', onClick);
+
     // Cleanup function
     return () => {
       window.removeEventListener("resize", handleResize);
@@ -449,6 +497,18 @@ export default function Home() {
     };
   }, []);
 
+  // Handle dropping a button on the shortcut popup
+  const handleShortcutDrop = (buttonId) => {
+    console.log('Button dropped:', buttonId);
+    setShowShortcutPopup(false);
+    
+    // Show the appropriate shortcut based on the button
+    if (buttonId === 'metamask-button') {
+      setShowMetamaskShortcut(true);
+    }
+    // Add handlers for other buttons if needed
+  };
+
   return (
     <>
       <style jsx global>{`
@@ -461,6 +521,19 @@ export default function Home() {
         * { box-sizing: border-box; }
       `}</style>
       <div style={{ width: "100%", height: "100vh" }} ref={mountRef}></div>
+      
+      {showShortcutPopup && (
+        <Shortcut 
+          onClose={() => setShowShortcutPopup(false)} 
+          onDrop={handleShortcutDrop} 
+        />
+      )}
+      
+      {showMetamaskShortcut && (
+        <MetamaskShortcut 
+          onClose={() => setShowMetamaskShortcut(false)} 
+        />
+      )}
     </>
   );
 }
