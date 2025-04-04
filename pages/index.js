@@ -70,8 +70,13 @@ export default function Home() {
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
 
-    // Disable right-click panning
-    controls.enablePan = false;
+    // Enable panning, but configure which buttons do what
+    controls.enablePan = true;
+    controls.mouseButtons = {
+      LEFT: THREE.MOUSE.ROTATE,
+      MIDDLE: THREE.MOUSE.PAN,
+      RIGHT: THREE.MOUSE.NONE // Disable right-click functionality
+    };
 
     // Force the controls to orbit around the center of the room
     controls.target.set(0, 1, 0); // Set target to center of room, at reasonable height
