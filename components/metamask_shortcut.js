@@ -11,78 +11,11 @@ export default function MetamaskShortcut({ onClose }) {
   // Define conversation flow
   const conversationFlow = {
     initial: {
-      message: 'Hello! I see you want to access your MetaMask wallet. What would you like to do?',
+      message: '',  // Removed the initial greeting
       options: [
-        { id: 'check-balance', text: 'Check my balance' },
+        { id: 'check-balance', text: 'Check my transaction' },
         { id: 'send-transaction', text: 'Send a transaction' },
         { id: 'swap-tokens', text: 'Swap tokens' }
-      ]
-    },
-    'check-balance': {
-      message: 'Which balance would you like to check?',
-      options: [
-        { id: 'eth-balance', text: 'ETH Balance' },
-        { id: 'token-balance', text: 'Token Balances' },
-        { id: 'all-balances', text: 'All Balances' }
-      ]
-    },
-    'eth-balance': {
-      message: 'Your current ETH balance is 1.45 ETH. What would you like to do next?',
-      options: [
-        { id: 'send-eth', text: 'Send ETH' },
-        { id: 'check-token-balance', text: 'Check token balances' },
-        { id: 'done', text: 'That\'s all for now' }
-      ]
-    },
-    'token-balance': {
-      message: 'Which token balance would you like to check?',
-      options: [
-        { id: 'usdt-balance', text: 'USDT' },
-        { id: 'uni-balance', text: 'UNI' },
-        { id: 'link-balance', text: 'LINK' }
-      ]
-    },
-    'all-balances': {
-      message: 'Here are all your balances:\n- ETH: 1.45\n- USDT: 250.00\n- UNI: 15.75\n- LINK: 25.30\nWhat would you like to do next?',
-      options: [
-        { id: 'send-transaction', text: 'Send a transaction' },
-        { id: 'swap-tokens', text: 'Swap tokens' },
-        { id: 'done', text: 'That\'s all for now' }
-      ]
-    },
-    'send-transaction': {
-      message: 'What type of transaction would you like to send?',
-      options: [
-        { id: 'send-eth', text: 'Send ETH' },
-        { id: 'send-token', text: 'Send Token' },
-        { id: 'back', text: 'Go back' }
-      ]
-    },
-    'send-eth': {
-      message: 'How much ETH would you like to send?',
-      options: [
-        { id: 'send-0.1', text: '0.1 ETH' },
-        { id: 'send-0.5', text: '0.5 ETH' },
-        { id: 'send-1.0', text: '1.0 ETH' },
-        { id: 'custom-amount', text: 'Custom amount' }
-      ]
-    },
-    'send-token': {
-      message: 'Which token would you like to send?',
-      options: [
-        { id: 'send-usdt', text: 'USDT' },
-        { id: 'send-uni', text: 'UNI' },
-        { id: 'send-link', text: 'LINK' },
-        { id: 'back', text: 'Go back' }
-      ]
-    },
-    'swap-tokens': {
-      message: 'Which tokens would you like to swap?',
-      options: [
-        { id: 'eth-to-usdt', text: 'ETH → USDT' },
-        { id: 'eth-to-uni', text: 'ETH → UNI' },
-        { id: 'usdt-to-eth', text: 'USDT → ETH' },
-        { id: 'back', text: 'Go back' }
       ]
     },
     'done': {
@@ -102,9 +35,8 @@ export default function MetamaskShortcut({ onClose }) {
 
   // Initialize conversation
   useEffect(() => {
-    // Start with initial message
+    // Start with initial options only, no message
     const initialStage = conversationFlow.initial;
-    setMessages([{ sender: 'AI', text: initialStage.message }]);
     setCurrentOptions(initialStage.options);
     setConversationStage('initial');
   }, []);
@@ -136,44 +68,31 @@ export default function MetamaskShortcut({ onClose }) {
       return;
     }
     
-    // Increment action count for meaningful actions (exclude navigation like 'back')
-    if (optionId !== 'back' && optionId !== 'close') {
-      const newActionCount = actionCount + 1;
-      setActionCount(newActionCount);
-      
-      // After 3 actions, show the exit message
-      if (newActionCount >= 3) {
-        setTimeout(() => {
-          setMessages(prev => [...prev, { 
-            sender: 'AI', 
-            text: 'You\'ve completed 3 actions. Would you like to continue or exit?' 
-          }]);
-          setCurrentOptions([
-            { id: 'continue', text: 'Continue using assistant' },
-            { id: 'exit', text: 'Done, please quit' }
-          ]);
-          setConversationStage('action-limit');
-          return;
-        }, 600);
-        return;
-      }
+    // If we're in the initial stage or any other stage except 'done' or 'exit',
+    // go straight to 'done' after selecting an option
+    if (conversationStage === 'initial' || 
+        (conversationStage !== 'done' && conversationStage !== 'exit' && conversationStage !== 'action-limit')) {
+      setTimeout(() => {
+        // Get the 'done' stage
+        const doneStage = conversationFlow['done'];
+        setMessages(prev => [...prev, { sender: 'AI', text: doneStage.message }]);
+        setCurrentOptions(doneStage.options);
+        setConversationStage('done');
+      }, 600);
+      return;
     }
-    
-    // Get next conversation stage
-    const nextStage = conversationFlow[optionId];
     
     // Special case for 'continue' option after 3 actions
     if (optionId === 'continue') {
-      const previousStage = conversationFlow[conversationStage];
       setTimeout(() => {
-        setMessages(prev => [...prev, { sender: 'AI', text: 'What would you like to do next?' }]);
         setCurrentOptions(conversationFlow.initial.options);
         setConversationStage('initial');
       }, 600);
       return;
     }
     
-    // Add AI response after a delay
+    // For any other option, proceed to the next stage as before
+    const nextStage = conversationFlow[optionId];
     setTimeout(() => {
       setMessages(prev => [...prev, { sender: 'AI', text: nextStage.message }]);
       setCurrentOptions(nextStage.options);
@@ -195,7 +114,7 @@ export default function MetamaskShortcut({ onClose }) {
         
         <div className={styles.chatContainer} ref={chatContainerRef}>
           <div className={styles.lowPolyBackground}></div>
-          {messages && messages.length > 0 ? (
+          {messages && messages.length > 0 && (
             messages.map((msg, index) => (
               <div key={index} className={`${styles.message} ${msg.sender === 'AI' ? styles.aiMessage : styles.userMessage}`}>
                 <div className={styles.messageBubble}>
@@ -205,12 +124,6 @@ export default function MetamaskShortcut({ onClose }) {
                 </div>
               </div>
             ))
-          ) : (
-            <div className={styles.loadingMessages}>
-              <div className={styles.loadingDot}></div>
-              <div className={styles.loadingDot}></div>
-              <div className={styles.loadingDot}></div>
-            </div>
           )}
           
           {currentOptions && currentOptions.length > 0 && (
