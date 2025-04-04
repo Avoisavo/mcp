@@ -34,7 +34,7 @@ export default function Home() {
     
     // Load video background
     const videoElement = document.createElement('video');
-    videoElement.src = 'assets/nite3.mp4';
+    videoElement.src = '/assets/nite3.mp4';
     videoElement.loop = true;
     videoElement.muted = true;
     videoElement.playsInline = true;
@@ -91,9 +91,9 @@ export default function Home() {
     scene.add(directionalLight2);
 
     // Room dimensions
-    const roomWidth = 10;
+    const roomWidth = 6;
     const roomHeight = 3.5;
-    const roomDepth = 10;
+    const roomDepth = 6;
 
     // Floor (specific color)
     const floorGeometry = new THREE.PlaneGeometry(roomWidth, roomDepth);
