@@ -45,7 +45,7 @@ export function loadFurniture(scene, roomWidth, roomHeight, roomDepth) {
     "/gltf/couch_pillows.gltf",
     (gltf) => {
       const model = gltf.scene;
-
+      
       // Disable shadows for the model
       model.traverse((node) => {
         if (node.isMesh) {
@@ -60,7 +60,7 @@ export function loadFurniture(scene, roomWidth, roomHeight, roomDepth) {
       
       // You can rotate the couch if needed
       model.rotation.y = Math.PI / 2; // Rotate 90 degrees - adjust as needed
-
+      
       scene.add(model);
       console.log("Couch model loaded successfully");
 
@@ -70,7 +70,7 @@ export function loadFurniture(scene, roomWidth, roomHeight, roomDepth) {
         "/gltf/table_low.gltf",
         (gltf) => {
           const lowTable = gltf.scene;
-
+          
           // Disable shadows for the model
           lowTable.traverse((node) => {
             if (node.isMesh) {
@@ -84,17 +84,17 @@ export function loadFurniture(scene, roomWidth, roomHeight, roomDepth) {
           
           // Rotate the table
           lowTable.rotation.y = Math.PI / 2; // 45 degrees rotation
-
+          
           scene.add(lowTable);
           console.log("Low table loaded successfully");
-
+          
           // Now load the cactus to place on the table
           const cactusLoader = new GLTFLoader();
           cactusLoader.load(
             "/gltf/cactus_small_A.gltf",
             (gltf) => {
               const cactus = gltf.scene;
-
+              
               // Disable shadows for the model
               cactus.traverse((node) => {
                 if (node.isMesh) {
@@ -120,14 +120,14 @@ export function loadFurniture(scene, roomWidth, roomHeight, roomDepth) {
               console.error("Error loading cactus model:", error);
             }
           );
-
+          
           // Load the book set to place on the table
           const bookSetLoader = new GLTFLoader();
           bookSetLoader.load(
             "/gltf/book_set.gltf",
             (gltf) => {
               const bookSet = gltf.scene;
-
+              
               // Disable shadows for the model
               bookSet.traverse((node) => {
                 if (node.isMesh) {
@@ -141,10 +141,10 @@ export function loadFurniture(scene, roomWidth, roomHeight, roomDepth) {
               
               // Increase the rotation of the books for more visual interest
               bookSet.rotation.y = Math.PI / 3; // 60 degrees rotation
-
+              
               // Scale down the book set to make it smaller
               bookSet.scale.set(0.7, 0.7, 0.7); // 70% of original size
-
+              
               scene.add(bookSet);
               console.log("Book set loaded successfully");
             },
@@ -190,7 +190,7 @@ export function loadFurniture(scene, roomWidth, roomHeight, roomDepth) {
     "/gltf/cabinet_medium_decorated.gltf",
     (gltf) => {
       const shelf = gltf.scene;
-
+      
       // Disable shadows for the model
       shelf.traverse((node) => {
         if (node.isMesh) {
@@ -226,7 +226,7 @@ export function loadFurniture(scene, roomWidth, roomHeight, roomDepth) {
     "/gltf/rug_rectangle_stripes_B.gltf",
     (gltf) => {
       const rug = gltf.scene;
-
+      
       // Disable shadows for the model
       rug.traverse((node) => {
         if (node.isMesh) {
@@ -240,7 +240,7 @@ export function loadFurniture(scene, roomWidth, roomHeight, roomDepth) {
       
       // Rotate the rug
       rug.rotation.y = 1.6;
-
+      
       scene.add(rug);
       console.log("Rug loaded successfully");
     },
@@ -262,7 +262,7 @@ export function loadFurniture(scene, roomWidth, roomHeight, roomDepth) {
     "/gltf/bed_double_A.gltf",
     (gltf) => {
       const bed = gltf.scene;
-
+      
       // Disable shadows for the model
       bed.traverse((node) => {
         if (node.isMesh) {
@@ -276,7 +276,7 @@ export function loadFurniture(scene, roomWidth, roomHeight, roomDepth) {
       
       // Rotate the bed
       bed.rotation.y = Math.PI / 2;
-
+      
       scene.add(bed);
       console.log("Double bed loaded successfully");
 
@@ -337,7 +337,7 @@ export function loadFurniture(scene, roomWidth, roomHeight, roomDepth) {
     "/gltf/cabinet_small.gltf",
     (gltf) => {
       const cabinet = gltf.scene;
-
+      
       // Disable shadows for the model
       cabinet.traverse((node) => {
         if (node.isMesh) {
@@ -351,17 +351,17 @@ export function loadFurniture(scene, roomWidth, roomHeight, roomDepth) {
       
       // Rotate the cabinet
       cabinet.rotation.y = Math.PI / 2;
-
+      
       scene.add(cabinet);
       console.log("Small cabinet loaded successfully");
-
+      
       // Load a picture frame to place on top of the cabinet
       const cabinetPictureLoader = new GLTFLoader();
       cabinetPictureLoader.load(
         "/gltf/lamp_table.gltf",
         (gltf) => {
           const cabinetPicture = gltf.scene;
-
+          
           // Disable shadows for the model
           cabinetPicture.traverse((node) => {
             if (node.isMesh) {
@@ -375,10 +375,10 @@ export function loadFurniture(scene, roomWidth, roomHeight, roomDepth) {
           
           // Rotate the picture frame to match the cabinet's orientation
           cabinetPicture.rotation.y = Math.PI / 2;
-
+          
           // Scale down the picture frame if needed
           cabinetPicture.scale.set(0.6, 0.6, 0.6);
-
+          
           scene.add(cabinetPicture);
           console.log("Cabinet picture frame loaded successfully");
         },
@@ -412,7 +412,7 @@ export function loadFurniture(scene, roomWidth, roomHeight, roomDepth) {
     "/gltf/pictureframe_large_B.gltf",
     (gltf) => {
       const couchWallPicture = gltf.scene;
-
+      
       // Disable shadows for the model
       couchWallPicture.traverse((node) => {
         if (node.isMesh) {
@@ -426,7 +426,7 @@ export function loadFurniture(scene, roomWidth, roomHeight, roomDepth) {
       
       // Rotate the picture frame to face into the room
       couchWallPicture.rotation.y = Math.PI / 2;
-
+      
       scene.add(couchWallPicture);
       console.log("Couch wall picture frame loaded successfully");
     },

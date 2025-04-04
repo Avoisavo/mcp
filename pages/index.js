@@ -31,7 +31,18 @@ export default function Home() {
 
     // Scene setup
     scene = new THREE.Scene();
-    scene.background = new THREE.Color("#eeeee4"); // Light blue background (sky blue)
+    
+    // Load video background
+    const videoElement = document.createElement('video');
+    videoElement.src = 'assets/nite3.mp4';
+    videoElement.loop = true;
+    videoElement.muted = true;
+    videoElement.playsInline = true;
+    videoElement.autoplay = true;
+    videoElement.play();
+    
+    const backgroundTexture = new THREE.VideoTexture(videoElement);
+    scene.background = backgroundTexture;
 
     // Camera setup
     camera = new THREE.PerspectiveCamera(
