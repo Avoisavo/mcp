@@ -45,7 +45,7 @@ export function loadFurniture(scene, roomWidth, roomHeight, roomDepth) {
     "/gltf/couch_pillows.gltf",
     (gltf) => {
       const model = gltf.scene;
-
+      
       // Disable shadows for the model
       model.traverse((node) => {
         if (node.isMesh) {
@@ -54,13 +54,12 @@ export function loadFurniture(scene, roomWidth, roomHeight, roomDepth) {
         }
       });
       
-      // Position the couch in the room - adjusted for larger room
-      //back, 
-      model.position.set(-4.5, 0, 1.5); // Moved further to the left and forward
+      // Position the couch in the room - adjusted for 6x6 room
+      model.position.set(-2.7, 0, 1.5); // Centered more in the room
       
       // You can rotate the couch if needed
-      model.rotation.y = Math.PI / 2; // Rotate 90 degrees - adjust as needed
-
+      model.rotation.y = Math.PI / 2; // Rotate 90 degrees
+      
       scene.add(model);
       console.log("Couch model loaded successfully");
 
@@ -70,7 +69,7 @@ export function loadFurniture(scene, roomWidth, roomHeight, roomDepth) {
         "/gltf/table_low.gltf",
         (gltf) => {
           const lowTable = gltf.scene;
-
+          
           // Disable shadows for the model
           lowTable.traverse((node) => {
             if (node.isMesh) {
@@ -79,22 +78,22 @@ export function loadFurniture(scene, roomWidth, roomHeight, roomDepth) {
             }
           });
           
-          // Position the low table in front of the couch - adjusted for larger room
-          lowTable.position.set(-1.5, 0,1.5); // Moved to be in front of the repositioned couch
+          // Position the low table in front of the couch - adjusted for 6x6 room
+          lowTable.position.set(-0.5, 0.1, 1.5); // Centered in front of couch
           
           // Rotate the table
           lowTable.rotation.y = Math.PI / 2; // 45 degrees rotation
-
+          
           scene.add(lowTable);
           console.log("Low table loaded successfully");
-
+          
           // Now load the cactus to place on the table
           const cactusLoader = new GLTFLoader();
           cactusLoader.load(
             "/gltf/cactus_small_A.gltf",
             (gltf) => {
               const cactus = gltf.scene;
-
+              
               // Disable shadows for the model
               cactus.traverse((node) => {
                 if (node.isMesh) {
@@ -103,8 +102,8 @@ export function loadFurniture(scene, roomWidth, roomHeight, roomDepth) {
                 }
               });
               
-              // Position the cactus on the low table - adjusted for larger room
-              cactus.position.set(-1, 0.6, 2); // Adjusted to match new table position
+              // Position the cactus on the low table - adjusted for 6x6 room
+              cactus.position.set(-0.5, 0.6, 1.5); // Centered on table
               
               scene.add(cactus);
               console.log("Small cactus loaded successfully");
@@ -120,14 +119,14 @@ export function loadFurniture(scene, roomWidth, roomHeight, roomDepth) {
               console.error("Error loading cactus model:", error);
             }
           );
-
+          
           // Load the book set to place on the table
           const bookSetLoader = new GLTFLoader();
           bookSetLoader.load(
             "/gltf/book_set.gltf",
             (gltf) => {
               const bookSet = gltf.scene;
-
+              
               // Disable shadows for the model
               bookSet.traverse((node) => {
                 if (node.isMesh) {
@@ -136,15 +135,15 @@ export function loadFurniture(scene, roomWidth, roomHeight, roomDepth) {
                 }
               });
               
-              // Position the book set on the low table - adjusted for larger room
-              bookSet.position.set(-0.7, 0.9, 1.5); // Adjusted to match new table position
+              // Position the book set on the low table - adjusted for 6x6 room
+              bookSet.position.set(-0.5, 0.9, 2.3); // Adjusted position on table
               
               // Increase the rotation of the books for more visual interest
               bookSet.rotation.y = Math.PI / 3; // 60 degrees rotation
-
+              
               // Scale down the book set to make it smaller
               bookSet.scale.set(0.7, 0.7, 0.7); // 70% of original size
-
+              
               scene.add(bookSet);
               console.log("Book set loaded successfully");
             },
@@ -184,41 +183,6 @@ export function loadFurniture(scene, roomWidth, roomHeight, roomDepth) {
     }
   );
 
-  // Load the shelf model
-  const shelfLoader = new GLTFLoader();
-  shelfLoader.load(
-    "/gltf/cabinet_medium_decorated.gltf",
-    (gltf) => {
-      const shelf = gltf.scene;
-
-      // Disable shadows for the model
-      shelf.traverse((node) => {
-        if (node.isMesh) {
-          node.castShadow = false;
-          node.receiveShadow = false;
-        }
-      });
-      
-      // Position the shelf on the left side of the couch - adjusted for larger room
-      shelf.position.set(-4.5, 0, 4);
-      
-      // Rotate the shelf to face into the room
-      shelf.rotation.y = Math.PI / 2;
-      
-      scene.add(shelf);
-      console.log("Cabinet loaded successfully");
-    },
-    (progress) => {
-      console.log(
-        "Loading cabinet progress:",
-        (progress.loaded / progress.total) * 100,
-        "%"
-      );
-    },
-    (error) => {
-      console.error("Error loading cabinet:", error);
-    }
-  );
 
   // Load the rug model
   const rugLoader = new GLTFLoader();
@@ -226,7 +190,7 @@ export function loadFurniture(scene, roomWidth, roomHeight, roomDepth) {
     "/gltf/rug_rectangle_stripes_B.gltf",
     (gltf) => {
       const rug = gltf.scene;
-
+      
       // Disable shadows for the model
       rug.traverse((node) => {
         if (node.isMesh) {
@@ -235,12 +199,12 @@ export function loadFurniture(scene, roomWidth, roomHeight, roomDepth) {
         }
       });
       
-      // Position the rug - adjusted for larger room
-      rug.position.set(-2, 0.1, 1.5);
+      // Position the rug - adjusted for 6x6 room
+      rug.position.set(-0.5, 0, 1.5); // Centered in the living area
       
       // Rotate the rug
       rug.rotation.y = 1.6;
-
+      
       scene.add(rug);
       console.log("Rug loaded successfully");
     },
@@ -256,13 +220,13 @@ export function loadFurniture(scene, roomWidth, roomHeight, roomDepth) {
     }
   );
 
-  // Load the double bed model
+  // Load the single bed model
   const bedLoader = new GLTFLoader();
   bedLoader.load(
-    "/gltf/bed_double_A.gltf",
+    "/gltf/bed_single_A.gltf",
     (gltf) => {
       const bed = gltf.scene;
-
+      
       // Disable shadows for the model
       bed.traverse((node) => {
         if (node.isMesh) {
@@ -271,12 +235,12 @@ export function loadFurniture(scene, roomWidth, roomHeight, roomDepth) {
         }
       });
       
-      // Position the bed in the room - adjusted for larger room
-      bed.position.set(-3, 0, -3);
+      // Position the bed in the room - adjusted for 6x6 room
+      bed.position.set(-2, 0, -2.5); // Moved toward the back wall
       
       // Rotate the bed
       bed.rotation.y = Math.PI / 2;
-
+      
       scene.add(bed);
       console.log("Double bed loaded successfully");
 
@@ -295,8 +259,8 @@ export function loadFurniture(scene, roomWidth, roomHeight, roomDepth) {
             }
           });
           
-          // Position the pillow on top of the bed - adjusted for larger room
-          bedPillow.position.set(-3, 0.6, -2.5);
+          // Position the pillow on top of the bed - adjusted for 6x6 room
+          bedPillow.position.set(-1.5, 0.6, -1.5); // Adjusted to match new bed position
           
           // Rotate the pillow to match the bed's orientation
           bedPillow.rotation.y = Math.PI / 2;
@@ -337,7 +301,7 @@ export function loadFurniture(scene, roomWidth, roomHeight, roomDepth) {
     "/gltf/cabinet_small.gltf",
     (gltf) => {
       const cabinet = gltf.scene;
-
+      
       // Disable shadows for the model
       cabinet.traverse((node) => {
         if (node.isMesh) {
@@ -346,22 +310,22 @@ export function loadFurniture(scene, roomWidth, roomHeight, roomDepth) {
         }
       });
       
-      // Position the cabinet next to the bed - adjusted for larger room
-      cabinet.position.set(-4.5, 0, -1);
+      // Position the bed cabinet next to the bed - adjusted for 6x6 room
+      cabinet.position.set(-3, 0, -1); // Moved closer to the bed
       
       // Rotate the cabinet
       cabinet.rotation.y = Math.PI / 2;
-
+      
       scene.add(cabinet);
       console.log("Small cabinet loaded successfully");
-
+      
       // Load a picture frame to place on top of the cabinet
       const cabinetPictureLoader = new GLTFLoader();
       cabinetPictureLoader.load(
         "/gltf/lamp_table.gltf",
         (gltf) => {
           const cabinetPicture = gltf.scene;
-
+          
           // Disable shadows for the model
           cabinetPicture.traverse((node) => {
             if (node.isMesh) {
@@ -370,15 +334,15 @@ export function loadFurniture(scene, roomWidth, roomHeight, roomDepth) {
             }
           });
           
-          // Position the picture frame on top of the cabinet - adjusted for larger room
-          cabinetPicture.position.set(-4.5, 1, -1);
+          // Position the picture frame on top of the cabinet - adjusted for 6x6 room
+          cabinetPicture.position.set(-3, 1, -1); // Adjusted to match new cabinet position
           
           // Rotate the picture frame to match the cabinet's orientation
           cabinetPicture.rotation.y = Math.PI / 2;
-
+          
           // Scale down the picture frame if needed
           cabinetPicture.scale.set(0.6, 0.6, 0.6);
-
+          
           scene.add(cabinetPicture);
           console.log("Cabinet picture frame loaded successfully");
         },
@@ -412,7 +376,7 @@ export function loadFurniture(scene, roomWidth, roomHeight, roomDepth) {
     "/gltf/pictureframe_large_B.gltf",
     (gltf) => {
       const couchWallPicture = gltf.scene;
-
+      
       // Disable shadows for the model
       couchWallPicture.traverse((node) => {
         if (node.isMesh) {
@@ -421,12 +385,12 @@ export function loadFurniture(scene, roomWidth, roomHeight, roomDepth) {
         }
       });
       
-      // Position the picture frame on the wall above the couch - adjusted for larger room
-      couchWallPicture.position.set(-roomWidth/2 + 0.05, 2, 1.5);
+      // Position the picture frame on the wall above the couch - adjusted for 6x6 room
+      couchWallPicture.position.set(-2.95, 2, 1); // Adjusted to be above the couch
       
       // Rotate the picture frame to face into the room
       couchWallPicture.rotation.y = Math.PI / 2;
-
+      
       scene.add(couchWallPicture);
       console.log("Couch wall picture frame loaded successfully");
     },
@@ -441,7 +405,7 @@ export function loadFurniture(scene, roomWidth, roomHeight, roomDepth) {
       console.error("Error loading couch wall picture frame:", error);
     }
   );
-
+//AC
   // Load the air conditioner model
   const airConditionerLoader = new FBXLoader();
   airConditionerLoader.load(
@@ -467,6 +431,10 @@ export function loadFurniture(scene, roomWidth, roomHeight, roomDepth) {
       
       // Scale the model if needed (adjust these values based on the model size)
       fbx.scale.set(0.015, 0.015, 0.015);
+      
+      // Make the air conditioner clickable
+      fbx.userData.clickable = true;
+      fbx.userData.type = 'airConditioner';
 
       scene.add(fbx);
       console.log("Air conditioner loaded successfully");
@@ -604,8 +572,8 @@ export function loadFurniture(scene, roomWidth, roomHeight, roomDepth) {
         }
       });
       
-      // Position the medium table against the right wall
-      mediumTable.position.set(roomWidth/2 - 4.5, 0, -4.5); // Right wall, middle of the room
+      // Position the medium table against the right wall - adjusted for 6x6 room
+      mediumTable.position.set(2, 0, -2.5); // Moved to fit in the 6x6 room
       
       // Rotate the table to face into the room
       mediumTable.rotation.y = -Math.PI / 2; // Rotate to face left (into the room)
@@ -636,8 +604,8 @@ export function loadFurniture(scene, roomWidth, roomHeight, roomDepth) {
             }
           });
           
-          // Position the laptop on the table - adjusted position
-          fbx.position.set(roomWidth/2 - 4.5, 1.01, -4); // Lower height on the table
+          // Position the laptop on the table - adjusted for 6x6 room
+          fbx.position.set(2, 1.01, -2); // Adjusted to match new table position
           
           // Rotate the laptop to face into the room
           fbx.rotation.y = -Math.PI / 2;
@@ -707,8 +675,8 @@ export function loadFurniture(scene, roomWidth, roomHeight, roomDepth) {
         }
       });
       
-      // Position the stool chair in front of the medium table
-      stoolChair.position.set(roomWidth/2 - 4.5, 0, -2.5); // In front of the table
+      // Position the stool chair in front of the medium table - adjusted for 6x6 room
+      stoolChair.position.set(2, 0, -1); // Moved to fit in the 6x6 room
       
       // Rotate the chair to face the table
       stoolChair.rotation.y = Math.PI / 1; // Rotate to face right (toward the table)
